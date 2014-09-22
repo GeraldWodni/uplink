@@ -1,0 +1,14 @@
+{
+  "name": "uplink",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./node_modules/.bin/supervisor ./bin/uplink",
+    "gforth": "node ./bin/gforth"
+  },
+  "dependencies": {
+    "colors": "^0.6.2",
+    "supervisor": "0.6.x",
+    "ws": "^0.4.32"
+  }
+}
