@@ -14,26 +14,49 @@ module.exports = function( forthName ){
 
         /* spawn forth and connect to websocket */
         var forth = child_process.spawn( forthName || "gforth" );
+        var lastInput = "";
 
         /* forth -> server */
         forth.stdout.on( "data", function( data ) {
+            var text = data.toString();
+            console.log( "lastInput", lastInput, "data:", text, "index:", text.indexOf( lastInput ) );
+            if( text.indexOf( lastInput ) == 0 ) {
+                data = text.substring( lastInput.length );
+                lastInput = "";
+            }
+
             console.log( data.toString().bold.blue );
-            ws.send( "stdout:" + data );
+            ws.send( "output:" + data );
         });
 
         forth.stderr.on( "data", function( data ) {
             console.log( data.toString().bold.yellow );
-            ws.send( "stderr:" + data );
+            ws.send( "error:" + data );
         });
 
         /* server -> forth */
-        ws.on( "message", function( data ) {
-            console.log( data.toString().bold.green );
-            forth.stdin.write( data );
-        });
+        ws.on( "message", function( message ) {
+            var text = message.toString();
+            var border = text.indexOf( ":" );
+            var command;
+            var data;
+            
+            if( border === -1 ) {
+                command = data;
+                data = "";
+            }
+            else {
+                command = text.substring( 0, border );
+                data = text.substring( border + 1 );
+            }
 
-        forth.on( "close", function( code, signal ) {
-            console.log( code );
+            if( command === "input" ) {
+                console.log( data.toString().bold.green );
+                forth.stdin.write( data );
+                lastInput = data.replace( /\n$/g, "" );
+            }
+            else
+                console.log( "Unknown command".bold.red + command + "//" + data );
         });
 
         ws.on( "close", function() { forth.kill() } );
