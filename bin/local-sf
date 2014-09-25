@@ -1,0 +1,3 @@
+#!/usr/bin/env node
+
+var app = require("../uplink")( { forth: "sf", args: ["fake-terminal.fs"], hostname: "localhost.theforth.net" } );

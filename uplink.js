@@ -5,20 +5,32 @@ var child_process = require("child_process");
 var WebSocket = require("ws");
 require("colors");
 
-module.exports = function( forthName ){
-    console.log( "hi there ;)".red.bold );
+module.exports = function( opts ){
 
     /* connect to theforth.net */
-    var ws = new WebSocket( "ws://localhost.theforth.net:3000/uplink" );
+    var websocketHostname = opts.hostname || "flink.theforth.net";
+    var forth;
+    console.log( ("Connecting to " + websocketHostname + "...").red.bold );
+    var ws = new WebSocket( "ws://" + websocketHostname + ":8000/uplink" );
     ws.on( "open", function() {
 
-        /* spawn forth and connect to websocket */
-        var forth = child_process.spawn( forthName || "gforth" );
         var lastInput = "";
+
+        /* spawn forth and connect to websocket */
+        var forthName = opts.forth || "gforth";
+        forth = child_process.spawn( forthName, opts.args || [] );
+
+	console.log( ( "Start Forth: " + forthName + "..." ).red.bold );
+        ws.send( "header:Forth Started\n" );
 
         /* forth -> server */
         forth.stdout.on( "data", function( data ) {
             var text = data.toString();
+
+            /* keep prefix if not gforth */
+            if( opts.keepPrefix || true )
+                lastInput = "";
+
             console.log( "lastInput", lastInput, "data:", text, "index:", text.indexOf( lastInput ) );
             if( text.indexOf( lastInput ) == 0 ) {
                 data = text.substring( lastInput.length );
@@ -33,6 +45,10 @@ module.exports = function( forthName ){
             console.log( data.toString().bold.yellow );
             ws.send( "error:" + data );
         });
+
+        forth.on( "error", function( err ) {
+            console.log( "Forth-Error: ", err );
+	});
 
         /* server -> forth */
         ws.on( "message", function( message ) {
@@ -59,7 +75,14 @@ module.exports = function( forthName ){
                 console.log( "Unknown command".bold.red + command + "//" + data );
         });
 
-        ws.on( "close", function() { forth.kill() } );
     });
 
+    ws.on( "close", function() { forth.kill() } );
+
+    ws.on( "error", function( error ) {
+        console.error( "Error: ", error );
+
+        if( forth && forth.kill )
+            forth.kill();
+    });
 };

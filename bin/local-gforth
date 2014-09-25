@@ -1,0 +1,3 @@
+#!/usr/bin/env node
+
+var app = require("../uplink")( { forth: "gforth", hostname: "localhost.theforth.net", keepPrefix: true } );
