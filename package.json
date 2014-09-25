@@ -6,8 +6,10 @@
     "start": "node ./node_modules/.bin/supervisor ./bin/uplink",
     "gforth": "node ./bin/gforth",
     "sf": "node ./bin/sf",
+    "vfx": "node ./bin/vfx",
     "local-gforth": "node ./bin/local-gforth",
-    "local-sf": "node ./bin/local-sf"
+    "local-sf": "node ./bin/local-sf",
+    "local-vfx": "node ./bin/local-vfx"
   },
   "dependencies": {
     "colors": "^0.6.2",

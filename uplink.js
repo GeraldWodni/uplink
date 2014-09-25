@@ -28,17 +28,25 @@ module.exports = function( opts ){
             var text = data.toString();
 
             /* keep prefix if not gforth */
-            if( opts.keepPrefix || true )
+            if( opts.keepPrefix == undefined || opts.keepPrefix )
                 lastInput = "";
+            else
+                console.log( "lastInput>", lastInput, "< data>", text, "< index:", text.indexOf( lastInput ) );
 
-            console.log( "lastInput", lastInput, "data:", text, "index:", text.indexOf( lastInput ) );
             if( text.indexOf( lastInput ) == 0 ) {
-                data = text.substring( lastInput.length );
+                text = text.substring( lastInput.length );
                 lastInput = "";
             }
 
-            console.log( data.toString().bold.blue );
-            ws.send( "output:" + data );
+            if( opts.removeVt100 || false ) {
+                text = text.replace( String.fromCharCode(27) + "[4h", "" );
+                text = text.replace( String.fromCharCode(27) + "[4l", "" );
+                text = text.replace( String.fromCharCode(27) + "[2J", "" );
+                text = text.replace( String.fromCharCode(27) + "[H", "" );
+            }
+
+            console.log( text.bold.blue );
+            ws.send( "output:" + text );
         });
 
         forth.stderr.on( "data", function( data ) {

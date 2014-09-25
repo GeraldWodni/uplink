@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-var app = require("../uplink")( { forth: "gforth", keepPrefix: true } );
+var app = require("../uplink")( { forth: "gforth", keepPrefix: false } );
