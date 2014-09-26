@@ -21,14 +21,14 @@ Commands
 ### Uplink (client) commands received from server
 #### input:<data>
 Interpret data as input, example:
-`input:.( hallo world)`
+`input:.( hallo world)\n` Note: '\n' represents a newline
 #### other
 Commands unknown to the Uplink must be discarded silently.
 
 ### Uplink (client) commands sent to server
 #### output:<data>
 Output data on the Server/Browser end, example:
-`output:ok\n` Note: '\n' represents a newline
+`output:ok\n`
 #### error:<data>
 Output data on the Server/Browser end formatted as error, example:
 `error:Stack underflow\n` Note: '\n' represents a newline
