@@ -4,7 +4,8 @@ Uplink Protocol
 Introduction
 ------------
 Uplink bases on a Websocket connection, see [RFC6455](http://tools.ietf.org/html/rfc6455).
-The Websocket protocol supports packaging, so synchronization needs to be programmed explicitly.
+The Websocket protocol supports packaging, so no synchronization needs to be programmed explicitly,
+and commands come in packets.
 
 Connect
 -------
