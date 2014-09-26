@@ -15,7 +15,8 @@ Once the connection is established, packets are sent and received by the Server 
 Packets
 -------
 Format: <command>:<data>
-Commands are allowed the following characters: a-z, A-Z, 0-9 and minus '-'
+Commands are allowed the following characters: a-z, A-Z, 0-9 and minus '-' and are delimited by colon ':'.
+The remaining packet content is plain data.
 
 Commands
 --------
