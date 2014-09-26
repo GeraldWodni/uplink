@@ -14,26 +14,26 @@ Once the connection is established, packets are sent and received by the Server 
 
 Packets
 -------
-Format: <command>:<data>
+Format: &lt;command&gt;:&lt;data&gt;
 Commands are allowed the following characters: a-z, A-Z, 0-9 and minus '-' and are delimited by colon ':'.
 The remaining packet content is plain data.
 
 Commands
 --------
 ### Uplink (client) commands received from server
-#### input:<data>
+#### input:&lt;data&gt;
 Interpret data as input, example:
 `input:.( hallo world)\n` Note: '\n' represents a newline
 #### other
 Commands unknown to the Uplink must be discarded silently.
 
 ### Uplink (client) commands sent to server
-#### output:<data>
+#### output:&lt;data&gt;
 Output data on the Server/Browser end, example:
 `output:ok\n`
-#### error:<data>
+#### error:&lt;data&gt;
 Output data on the Server/Browser end formatted as error, example:
 `error:Stack underflow\n` Note: '\n' represents a newline
-#### header:<data>
+#### header:&lt;data&gt;
 Output data on the Server/Browser end formatted as header, example:
 `header:Forth ready\n`
