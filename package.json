@@ -7,13 +7,16 @@
     "gforth": "node ./bin/gforth",
     "sf": "node ./bin/sf",
     "vfx": "node ./bin/vfx",
+    "serial": "node ./bin/serial",
     "local-gforth": "node ./bin/local-gforth",
     "local-sf": "node ./bin/local-sf",
-    "local-vfx": "node ./bin/local-vfx"
+    "local-vfx": "node ./bin/local-vfx",
+    "local-serial": "node ./bin/local-serial"
   },
   "dependencies": {
     "colors": "^0.6.2",
     "supervisor": "0.6.x",
-    "ws": "^0.4.32"
+    "ws": "^0.4.32",
+    "serialport": "~1.4.6"
   }
 }

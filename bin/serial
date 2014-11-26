@@ -1,0 +1,3 @@
+#!/usr/bin/env node
+
+var app = require("../uplink")( { forth: "./serial.js", args: [ "115200", "ANY" ], keepPrefix: true } );
