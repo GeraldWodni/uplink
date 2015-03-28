@@ -18,5 +18,9 @@
     "supervisor": "0.6.x",
     "ws": "^0.4.32",
     "serialport": "~1.4.6"
+  },
+  "config": {
+    "host": "flink.theforth.net",
+    "port": 8000
   }
 }

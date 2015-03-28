@@ -7,21 +7,37 @@ require("colors");
 
 module.exports = function( opts ){
 
+    var key = opts.key || process.env.npm_config_key;
+    if( !key )  {
+        console.log( "No key passed:".red.bold, "Use npm --key=<key> run <system>" );
+        process.exit(0);
+    }
+
     /* connect to theforth.net */
-    var websocketHostname = opts.hostname || "flink.theforth.net";
+    var websocketHostname = opts.hostname || process.env.npm_package_config_host || "flink.theforth.net";
+    var port = opts.port || process.env.npm_package_config_port || 8000;
     var forth;
     console.log( ("Connecting to " + websocketHostname + "...").red.bold );
-    var ws = new WebSocket( "ws://" + websocketHostname + ":8000/uplink" );
+    var ws = new WebSocket( "ws://" + websocketHostname + ":" + port + "/uplink?key=" + key );
     ws.on( "open", function() {
 
         var lastInput = "";
+        var accepted = false;
+        var sendQueue = [];
+
+        function send( message ) {
+            if( accepted )
+                ws.send( message );
+            else
+                sendQueue.push( message );
+        }
 
         /* spawn forth and connect to websocket */
         var forthName = opts.forth || "gforth";
         forth = child_process.spawn( forthName, opts.args || [] );
 
 	console.log( ( "Start Forth: " + forthName + "..." ).red.bold );
-        ws.send( "header:Forth Started\n" );
+        send( "header:Forth Started\n" );
 
         /* forth -> server */
         forth.stdout.on( "data", function( data ) {
@@ -46,12 +62,12 @@ module.exports = function( opts ){
             }
 
             console.log( text.bold.blue );
-            ws.send( "output:" + text );
+            send( "output:" + text );
         });
 
         forth.stderr.on( "data", function( data ) {
             console.log( data.toString().bold.yellow );
-            ws.send( "error:" + data );
+            send( "error:" + data );
         });
 
         forth.on( "error", function( err ) {
@@ -66,7 +82,7 @@ module.exports = function( opts ){
             var data;
             
             if( border === -1 ) {
-                command = data;
+                command = text;
                 data = "";
             }
             else {
@@ -79,8 +95,21 @@ module.exports = function( opts ){
                 forth.stdin.write( data );
                 lastInput = data.replace( /\n$/g, "" );
             }
+            else if( command == "accepted" ) {
+                /* send queue and use direct ws.send from now on */
+                for( var i = 0; i < sendQueue.length; i++ )
+                    ws.send( sendQueue[i] );
+                accepted = true;
+                console.log( "Connection Accepted, sending queue".bold.red );
+            }
+            else if( command == "rejected" ) {
+                console.log( ("Connection rejected: " + data).red.bold );
+                if( forth && forth.kill )
+                    forth.kill();
+                process.exit();
+            }
             else
-                console.log( "Unknown command".bold.red + command + "//" + data );
+                console.log( "Unknown command".bold.red, command, "//", data );
         });
 
     });
