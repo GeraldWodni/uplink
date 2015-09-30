@@ -47,7 +47,7 @@ else if( argv.length == 2 ) {
             });
 
             rl.on( "line", function( line ) {
-                sPort.write( line + "\n\r" );
+                sPort.write( line + "\n" );
             });
         });
     };

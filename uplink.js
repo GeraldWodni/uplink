@@ -17,7 +17,7 @@ module.exports = function( opts ){
     var websocketHostname = opts.hostname || process.env.npm_package_config_host || "flink.theforth.net";
     var port = opts.port || process.env.npm_package_config_port || 8000;
     var forth;
-    console.log( ("Connecting to " + websocketHostname + "...").red.bold );
+    console.log( ("Connecting to " + websocketHostname + ":" + port + "...").red.bold );
     var ws = new WebSocket( "ws://" + websocketHostname + ":" + port + "/uplink?key=" + key );
     ws.on( "open", function() {
 
